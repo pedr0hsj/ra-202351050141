@@ -40,10 +40,10 @@ Falha de SQL Injection.
 
 2. Qual o dano possível em produção?
 
-Algum usario mal intencionado, conseguira acessar o banco de dados da empresa podendo ter todas 
+Algum usario mal intencionado, conseguira acessar o banco de dados da empresa podendo ter todas as informações de dados sensiveis
 
 3. Como corrigir?
-
+A falha pode ser corrigida utilizando consultas parametrizadas, evitando a concatenação direta do parâmetro nome na consulta SQL. Dessa forma, o valor fornecido pelo usuário é tratado como um dado, e não como parte do comando SQL.
 
 
 ## VULNERABILIDADE 02 — A consulta de faturas
@@ -96,9 +96,19 @@ Trecho de inicialização da API, idêntico em todos os ambientes. Este arquivo 
 
 1. Qual é a falha?
 
+Exposição de credenciais do banco de dados diretamente no código-fonte versionado no Git.
+Uso da senha do banco de dados de produção no código.
+Ativação da página de erros detalhados (UseDeveloperExceptionPage) em produção, podendo expor informações sensíveis do sistema.
+
+
 2. Qual o dano possível em produção?
 
+Como as credenciais estão no Git, elas podem ser acessadas por pessoas que tenham acesso ao repositório, inclusive em versões antigas do histórico.
+
 3. Como corrigir?
+
+Aplicar o princípio do menor privilégio: A conta utilizada pela aplicação deve ter apenas as permissões necessárias no banco de dados.
+
 
 ## VULNERABILIDADE 04 — A atualização de perfil
 
@@ -126,9 +136,18 @@ Endpoint que o app chama quando o usuário edita o próprio perfil. O corpo da r
 
 1. Qual é a falha?
 
+Falha de Mass Assignment (atribuição em massa), pois o usuário pode enviar o campo Role no JSON e tentar alterar seu próprio nível de acesso de "user" para "admin",
+sem uma validação adequada de autorização.
+
 2. Qual o dano possível em produção?
 
+Um usuário mal-intencionado poderá alterar sua função de usuário comum para administrador, obtendo acesso a funcionalidades restritas do sistema,
+como gerenciamento de usuários, visualização de informações sigilosas e alteração de dados. Isso pode comprometer a segurança e a integridade da aplicação.
+
 3. Como corrigir?
+
+Permitir que o usuário altere apenas os dados autorizados, como nome e e-mail.
+Validar a autorização no servidor antes de permitir alterações de privilégios.
 
 ## DESAFIO
 
